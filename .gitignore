@@ -1,0 +1,12 @@
+# Only the template goes into Git: everything else stays private
+/*
+!/.gitignore
+!/README.md
+!/Makefile
+!/skeleton-cv.tex
+!/output/
+/output/*
+!/output/.gitkeep
+!/pictures/
+/pictures/*
+!/pictures/.gitkeep

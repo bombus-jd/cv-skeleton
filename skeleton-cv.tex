@@ -1,0 +1,212 @@
+\documentclass[10pt,a4paper]{article}
+% Build both PDFs with "make" (see README.md)
+
+% --- Personal data (the Makefile builds the PDF name from these two lines)
+\newcommand{\cvfirstname}{Vorname}
+\newcommand{\cvlastname}{Nachname}
+\newcommand{\cvphoto}{pictures/photo.jpg} % a placeholder is drawn if the file is missing
+
+% --- Language switch: \germantrue or \germanfalse decides the editor build
+\newif\ifgerman \germantrue
+\ifdefined\buildenglish \germanfalse \fi % set by "make en"
+% \lang{deutsch}{english}
+\ifgerman \newcommand{\lang}[2]{#1} \else \newcommand{\lang}[2]{#2} \fi
+
+% --- Packages
+\usepackage[english,ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[a4paper,margin=14mm]{geometry} % Size of Document
+\usepackage{paracol}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{tikz}
+\usepackage{eso-pic}
+\usepackage{adjustbox} % to crop pic
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+
+\AtBeginDocument{\ifgerman\else\selectlanguage{english}\fi}
+
+% --- Colors
+\definecolor{sidebar}{HTML}{0F6C74}   % nice petrol for sidebar
+\definecolor{textgray}{gray}{0.15}
+\definecolor{cvgreen}{HTML}{2BAF6A}   % accent green for dots
+
+% --- Sidebar background (width MUST match \columnratio left part)
+\AddToShipoutPictureBG{%
+  \AtPageLowerLeft{%
+    \begin{tikzpicture}[remember picture,overlay]
+      \fill[sidebar] (0,0) rectangle (\paperwidth*0.30,\paperheight);
+    \end{tikzpicture}%
+  }%
+}
+
+% --- Two-column setup (keep in sync with background above)
+\columnratio{0.30,0.70}
+\setlength{\columnsep}{4mm}
+
+% --- Links & lists
+\setlist[itemize]{itemsep=2pt, topsep=2pt, leftmargin=1.2em}
+\hypersetup{colorlinks=true, urlcolor=black, linkcolor=black,
+  pdftitle={\lang{Lebenslauf}{Curriculum Vitae} \cvfirstname{} \cvlastname},
+  pdfauthor={\cvfirstname{} \cvlastname},
+  pdflang={\lang{de}{en}}}
+
+% --- Helpers
+\newcommand{\sidehead}[1]{\vspace{1ex}\textbf{\large #1}\par\vspace{0.4em}}
+\newcommand{\sectiontitle}[1]{\vspace{1.0em}\textbf{\large #1}\par\vspace{0.25em}\hrule\vspace{0.6em}}
+
+\newcommand{\cventry}[3]{%
+  \noindent
+  \begin{tabularx}{\linewidth}{@{}p{28mm}X@{}}
+    \raggedright\small\textsf{#1} & \textbf{#2} \\
+  \end{tabularx}\par
+  \vspace{0.2em}
+  #3\par
+  \vspace{0.8em}
+}
+
+% ---------- Dots helper (no extra spaces)
+\makeatletter
+\newcommand{\reptoken}[2]{%
+  \begingroup\@tempcnta=0\relax
+  \loop\ifnum\@tempcnta<#1 #2\advance\@tempcnta by1\relax\repeat
+  \endgroup}
+% \pictofraction{icon}{colA}{nA}{colB}{nB}{size}
+\newcommand{\pictofraction}[6]{%
+  {\begingroup #6%
+    \reptoken{#3}{\textcolor{#2}{#1}}%
+    \reptoken{#5}{\textcolor{#4}{#1}}%
+  \endgroup}}
+\makeatother
+
+% ---------- Row macros (clean and consistent)
+% Skills with dots only:
+\newcommand{\skillrow}[3]{% name, full, empty
+  \textbf{#1} & \pictofraction{\faCircle}{cvgreen}{#2}{black!30}{#3}{\tiny} \\}
+% Languages with level:
+\newcommand{\langrow}[2]{\textbf{#1} & #2\\}
+% --- Keep header aligned with photo
+\newlength{\photoH}
+\setlength{\photoH}{35mm}
+
+\begin{document}
+\pagestyle{empty}
+\small
+\color{textgray}
+
+\begin{paracol}{2}
+
+% ===== LEFT COLUMN =====
+\color{white}\raggedright\normalsize
+
+% Photo (stays inside the column)
+\begin{minipage}[t][\photoH][t]{\linewidth}
+% trim = left bottom right top
+  \IfFileExists{\cvphoto}{%
+    \adjustbox{clip, trim={0cm 0cm 0cm 0cm}, height=\photoH,
+      keepaspectratio}{\includegraphics[width=\linewidth]{\cvphoto}}%
+  }{%
+    \tikz\draw[white,dashed] (0,0) rectangle node{\lang{Foto}{Photo}} (25mm,\photoH);%
+  }
+\end{minipage}
+
+\vspace{\stretch{1}}
+
+\sidehead{\underline{\lang{EDV-Kenntnisse}{IT Skills}}}
+\setlength{\tabcolsep}{4pt}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}l >{\raggedright\arraybackslash}X@{}}
+  \skillrow{Python}{3}{2}
+  \skillrow{R}{2}{3}
+  \skillrow{Git}{4}{1}
+\end{tabularx}
+
+\vspace{\stretch{1}}
+
+\sidehead{\underline{\lang{Sprachen}{Languages}}}
+\begin{tabularx}{\linewidth}{@{}>{\bfseries}l >{\centering\arraybackslash}p{12mm}@{}}
+  \langrow{\lang{Deutsch}{German}}{C2}
+  \langrow{\lang{Englisch}{English}}{C1}
+\end{tabularx}
+
+\vspace{\stretch{1}}
+
+\sidehead{\underline{\lang{Interessen}{Interests}}}
+\small
+\begin{itemize}
+  \item \lang{Interesse 1}{Interest 1}
+  \item \lang{Interesse 2}{Interest 2}
+\end{itemize}
+
+\vfill
+
+% ===== RIGHT COLUMN =====
+\switchcolumn
+\raggedright\color{textgray}
+
+% Header block aligned with photo
+\parbox[b][\photoH][t]{\linewidth}{%
+  {\LARGE \textbf{\cvfirstname{} \cvlastname}}\par \vspace{5mm}
+  \lang{Straße Hausnummer, PLZ Stadt}{Street Number, Postcode City} \\
+  \lang{Mobil}{Mobile}: +49 000 0000000 \quad
+  Mail: \href{mailto:name@example.com}{name@example.com}\par
+  LinkedIn: \href{https://linkedin.com/in/my-link}{linkedin.com/in/my-link} \par
+  GitHub: \href{https://github.com/my-link}{github.com/my-link}
+}
+
+% --------- Professional Experience ----------
+{\small
+\setlist[itemize]{itemsep=1pt, topsep=2pt, leftmargin=1.1em}
+
+\sectiontitle{\lang{Beruflicher Werdegang}{Professional Experience}}
+
+\cventry{\lang{Seit}{Since} 01/2025}{\lang{Position, Arbeitgeber, Stadt}{Position, Employer, City}}{%
+\begin{itemize}
+  \item \lang{Aufgabe oder Ergebnis}{Task or achievement}
+  \item \lang{Aufgabe oder Ergebnis}{Task or achievement}
+\end{itemize}}
+
+\cventry{01/2023 -- 12/2024}{\lang{Werkstudent, Unternehmen, Stadt}{Working Student, Company, City}}{%
+\textit{\lang{Bereich XY}{Division XY}}
+\begin{itemize}
+  \item \lang{Aufgabe oder Ergebnis}{Task or achievement}
+\end{itemize}}
+} % end small
+
+% --------- Academic Background ----------
+{\small
+\setlist[itemize]{itemsep=1pt, topsep=2pt, leftmargin=1.1em}
+
+\sectiontitle{\lang{Akademischer Werdegang}{Academic Background}}
+
+\cventry{10/2022 -- 09/2024}{\lang{M.Sc. Studiengang, Universität}{M.Sc. Subject, University}}{%
+\begin{itemize}
+  \item \lang{Schwerpunkte}{Focus areas}: \lang{Schwerpunkt}{Focus}
+  \item \lang{Masterarbeit}{Master’s thesis}: \lang{Titel}{Title} (\lang{1,0}{1.0})
+  \item \lang{Gesamtnote}{Final grade}: \lang{1,0}{1.0}
+\end{itemize}}
+
+\cventry{01/2022 -- 06/2022}{\lang{Auslandssemester, Universität, Stadt}{Semester abroad, University, City}}{}
+
+\cventry{10/2019 -- 09/2022}{\lang{B.Sc. Studiengang, Universität}{B.Sc. Subject, University}}{%
+\begin{itemize}
+  \item \lang{Schwerpunkt}{Focus area}: \lang{Schwerpunkt}{Focus}
+  \item \lang{Bachelorarbeit}{Bachelor’s thesis}: \lang{Titel}{Title} (\lang{1,0}{1.0})
+  \item \lang{Gesamtnote}{Final grade}: \lang{1,0}{1.0}
+\end{itemize}}
+} % end small
+
+% --------- Other Activities ----------
+{\small
+\setlist[itemize]{itemsep=1pt, topsep=2pt, leftmargin=1.1em}
+
+\sectiontitle{\lang{Sonstiges}{Other Activities}}
+
+\cventry{01/2021 -- 12/2021}{\lang{Ehrenamt oder Gremium}{Volunteering or committee}}{}
+} % end small
+
+\end{paracol}
+\end{document}
