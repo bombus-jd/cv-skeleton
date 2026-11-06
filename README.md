@@ -78,6 +78,17 @@ Die PDFs liegen danach im Ordner `output`, zum Beispiel als `Mueller_Anna_de.pdf
 
 **Foto hinzufügen (freiwillig):** Lege neben der `.tex`-Datei einen Ordner `pictures` an, falls es ihn noch nicht gibt, und speichere dein Foto dort als `photo.jpg`. Ohne Foto erscheint ein gestrichelter Platzhalter. Den Bildausschnitt stellst du im Abschnitt `Photo` über `trim` ein.
 
+## Farbe ändern
+
+Die Farben stehen im Abschnitt `Colors` weit oben in der Datei. Ersetze dort nur den sechsstelligen Farbcode:
+
+```latex
+\definecolor{sidebar}{HTML}{0F6C74}   % linker Balken
+\definecolor{cvgreen}{HTML}{2BAF6A}   % Punkte bei den Kenntnissen
+```
+
+Für den linken Balken eignen sich dunkle Farben, weil die Schrift darauf weiß ist. Beispiele sind `1F3A5F` (Dunkelblau), `2F3640` (Anthrazit) und `7A1F3D` (Bordeaux). Weitere Codes findest du, wenn du im Internet nach „HTML Color Picker“ suchst. Danach erzeugst du das PDF wie gewohnt neu.
+
 ## Wenn etwas nicht klappt
 
 | Problem | Lösung |
